@@ -1,5 +1,5 @@
-import app from "./app.js";
 import { env } from "./config/dotenv.config.js";
+import app from "./app.js";
 import { connectDB } from "./config/db.config.js";
 import { socketService } from "./services/socket.service.js";
 

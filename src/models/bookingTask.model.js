@@ -5,8 +5,7 @@ const bookingTaskSchema = new mongoose.Schema(
     bookingId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Booking",
-      required: true,
-      index: true
+      required: true
     },
 
     task: {
