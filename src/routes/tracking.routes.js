@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { updateLocation } from "../controllers/tracking.controller.js";
-import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { updateLocation, getLiveDoctors } from "../controllers/tracking.controller.js";
+import { authMiddleware, adminOnly } from "../middlewares/auth.middleware.js";
 import { roleMiddleware } from "../middlewares/role.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import { updateLocationSchema } from "../validations/tracking.validation.js";
@@ -14,5 +14,8 @@ router.post(
   validate(updateLocationSchema),
   updateLocation
 );
+
+// Admin routes
+router.get("/admin/live", authMiddleware, adminOnly, getLiveDoctors);
 
 export default router;

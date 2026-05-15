@@ -9,3 +9,18 @@ export const updateLocation = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+
+export const getLiveDoctors = async (req, res) => {
+  try {
+    const { Doctor } = await import("../models/doctor.model.js");
+    const liveDoctors = await Doctor.find({
+      isOnline: 1,
+      "location.latitude": { $exists: true, $ne: null },
+      "location.longitude": { $exists: true, $ne: null }
+    }).select("name email phone specialization profileImage location lastLocationAt isOnline clinicName clinicAddress");
+    
+    res.json({ success: true, count: liveDoctors.length, data: liveDoctors });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

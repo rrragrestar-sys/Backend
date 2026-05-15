@@ -4,8 +4,9 @@ import {
   verifyEmailOtp,
   loginUser,
   getMyProfile,
+  getAllUsers,
 } from "../controllers/user.controller.js";
-import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { authMiddleware, adminOnly } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
 import {
   registerSchema,
@@ -20,5 +21,8 @@ router.post("/verify-otp", validate(verifyOtpSchema), verifyEmailOtp);
 router.post("/login", validate(loginSchema), loginUser);
 
 router.get("/me", authMiddleware, getMyProfile);
+
+// Admin routes
+router.get("/", authMiddleware, adminOnly, getAllUsers);
 
 export default router;
