@@ -10,6 +10,9 @@ import chatRoutes from "./routes/chat.routes.js";
 import trackingRoutes from "./routes/tracking.routes.js";
 import analyticsRoutes from "./routes/analytics.routes.js";
 import systemRoutes from "./routes/system.routes.js";
+import clinicalRoutes from "./routes/clinical.routes.js";
+import financialRoutes from "./routes/financial.routes.js";
+import taskRoutes from "./routes/task.routes.js";
 
 
 import { errorHandler } from "./middlewares/error.middleware.js";
@@ -39,6 +42,9 @@ app.use("/api/tracking", trackingRoutes);
 app.use("/api/verification", verificationRoutes);
 app.use("/api/analytics", analyticsRoutes);
 app.use("/api/system", systemRoutes);
+app.use("/api/clinical", clinicalRoutes);
+app.use("/api/financial", financialRoutes);
+app.use("/api/tasks", taskRoutes);
 
 
 /* ===============================

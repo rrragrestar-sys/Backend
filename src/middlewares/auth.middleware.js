@@ -29,3 +29,15 @@ export const adminOnly = (req, res, next) => {
   console.log(`[AUTH] Admin authorized: ${req.user.id}`);
   next();
 };
+
+export const roleMiddleware = (allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: "Forbidden: You do not have the required role",
+      });
+    }
+    next();
+  };
+};

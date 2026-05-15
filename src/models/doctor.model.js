@@ -87,6 +87,10 @@ const doctorSchema = new mongoose.Schema(
       index: true,
     },
 
+    licenseDocument: {
+      type: String, // S3 URL
+    },
+
     verificationStatus: {
       type: Number,
       enum: [0, 1, 2], // 0=PENDING,1=APPROVED,2=REJECTED

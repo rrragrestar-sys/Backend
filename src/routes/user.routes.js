@@ -4,63 +4,21 @@ import {
   verifyEmailOtp,
   loginUser,
   getMyProfile,
-  getAllUsers,
-  getUserById,
-  updateUser,
-  deleteUser
 } from "../controllers/user.controller.js";
-
 import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { validate } from "../middlewares/validate.middleware.js";
+import {
+  registerSchema,
+  loginSchema,
+  verifyOtpSchema,
+} from "../validations/user.validation.js";
 
 const router = Router();
 
-/* ===============================
-   PUBLIC ROUTES
-=============================== */
+router.post("/register", validate(registerSchema), registerUser);
+router.post("/verify-otp", validate(verifyOtpSchema), verifyEmailOtp);
+router.post("/login", validate(loginSchema), loginUser);
 
-router.post("/register", registerUser);
-router.post("/verify-otp", verifyEmailOtp);
-router.post("/login", loginUser);
-
-/* ===============================
-   PROTECTED ROUTES
-=============================== */
-
-/* Get logged-in user profile */
 router.get("/me", authMiddleware, getMyProfile);
-
-/* ===============================
-   ADMIN ONLY ROUTES
-=============================== */
-
-router.get(
-  "/",
-  authMiddleware,
-  (req, res, next) => {
-    if (req.user.role !== "ADMIN") {
-      return res.status(403).json({ message: "Access denied" });
-    }
-    next();
-  },
-  getAllUsers
-);
-
-router.get(
-  "/:id",
-  authMiddleware,
-  getUserById
-);
-
-router.put(
-  "/:id",
-  authMiddleware,
-  updateUser
-);
-
-router.delete(
-  "/:id",
-  authMiddleware,
-  deleteUser
-);
 
 export default router;

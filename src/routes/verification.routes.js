@@ -1,24 +1,10 @@
-import express from "express";
-import {
-  submitVerification,
-  getPendingVerifications,
-  updateVerificationStatus,
-} from "../controllers/verification.controller.js";
-import { authMiddleware, adminOnly } from "../middlewares/auth.middleware.js";
-import { upload } from "../middlewares/upload.middleware.js";
+import { Router } from "express";
+import { submitVerification } from "../controllers/verification.controller.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { uploadSingle } from "../middlewares/upload.middleware.js";
 
-const router = express.Router();
+const router = Router();
 
-// Provider Routes
-router.post(
-  "/submit",
-  authMiddleware,
-  upload.single("document"),
-  submitVerification
-);
-
-// Admin Routes
-router.get("/pending", authMiddleware, adminOnly, getPendingVerifications);
-router.patch("/status/:id", authMiddleware, adminOnly, updateVerificationStatus);
+router.post("/submit", authMiddleware, uploadSingle("document"), submitVerification);
 
 export default router;

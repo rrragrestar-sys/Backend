@@ -1,54 +1,34 @@
 import { Payment } from "../models/payment.model.js";
 
 class BillingService {
-  constructor(commissionRate = 0.1) {
-    this.commissionRate = commissionRate;
-  }
-
   /**
-   * Calculate commission and provider payout
+   * Calculate 10% platform fee and 90% provider split
    * @param {number} totalAmount 
    * @returns {object} { platformFee, providerAmount }
    */
-  calculateFees(totalAmount) {
-    const platformFee = Math.round(totalAmount * this.commissionRate * 100) / 100;
+  calculateSplit(totalAmount) {
+    const platformFee = totalAmount * 0.10;
     const providerAmount = totalAmount - platformFee;
     return { platformFee, providerAmount };
   }
 
-  /**
-   * Record a new payment and calculate fees
-   */
-  async recordPayment(data) {
-    const { totalAmount, ...rest } = data;
-    const { platformFee, providerAmount } = this.calculateFees(totalAmount);
+  async createPaymentRecord(data) {
+    const { totalAmount, bookingId, userId, providerId, providerType, paymentMode } = data;
+    const { platformFee, providerAmount } = this.calculateSplit(totalAmount);
 
-    const payment = await Payment.create({
+    const payment = new Payment({
+      bookingId,
+      userId,
+      providerId,
+      providerType,
       totalAmount,
       platformFee,
       providerAmount,
-      ...rest,
-      status: "SUCCESS" // Assuming payment was already successful via gateway
+      paymentMode,
+      status: "SUCCESS" // Simplified for now
     });
 
-    return payment;
-  }
-
-  /**
-   * Mock payout processing
-   */
-  async processPayout(paymentId) {
-    const payment = await Payment.findById(paymentId);
-    if (!payment) throw new Error("Payment record not found");
-
-    // In a real app, this would call Stripe Connect or Razorpay Route API
-    console.log(`[BILLING] Processing payout of ${payment.providerAmount} to provider ${payment.providerId}`);
-    
-    // For now, we just mark it as processed if we had a field for it, 
-    // but the Payment model doesn't have a payoutStatus. 
-    // We could add one if needed.
-    
-    return { success: true, amount: payment.providerAmount };
+    return await payment.save();
   }
 }
 

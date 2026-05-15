@@ -14,6 +14,10 @@ const bookingTaskSchema = new mongoose.Schema(
       required: true,
       trim: true,
       maxlength: 100
+    },
+    isCompleted: {
+      type: Boolean,
+      default: false
     }
   },
   {

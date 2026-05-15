@@ -1,18 +1,18 @@
-import express from "express";
-import { authMiddleware, adminOnly } from "../middlewares/auth.middleware.js";
-import {
-  updateLocation,
-  getLiveLocations,
-  getLocationHistory
-} from "../controllers/tracking.controller.js";
+import { Router } from "express";
+import { updateLocation } from "../controllers/tracking.controller.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { roleMiddleware } from "../middlewares/role.middleware.js";
+import { validate } from "../middlewares/validate.middleware.js";
+import { updateLocationSchema } from "../validations/tracking.validation.js";
 
-const router = express.Router();
+const router = Router();
 
-// Publicly logged-in users tracking update
-router.post("/update", authMiddleware, updateLocation);
-
-// Admin-only tracking tools
-router.get("/admin/live", authMiddleware, adminOnly, getLiveLocations);
-router.get("/admin/history/:role/:id", authMiddleware, adminOnly, getLocationHistory);
+router.post(
+  "/update",
+  authMiddleware,
+  roleMiddleware("PATIENT", "DOCTOR"),
+  validate(updateLocationSchema),
+  updateLocation
+);
 
 export default router;
