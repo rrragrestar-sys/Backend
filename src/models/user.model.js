@@ -104,6 +104,15 @@ const userSchema = new mongoose.Schema(
       type: Date
     },
 
+    location: {
+      latitude: Number,
+      longitude: Number
+    },
+
+    lastLocationAt: {
+      type: Date
+    },
+
     /* ===============================
        SECURITY TRACKING
     =============================== */
@@ -115,6 +124,13 @@ const userSchema = new mongoose.Schema(
 
     lockUntil: {
       type: Date
+    },
+
+    appKey: {
+      type: String,
+      enum: ["edoc", "edoc-b2b"],
+      default: "edoc",
+      index: true
     },
 
     refreshToken: {

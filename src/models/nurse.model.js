@@ -67,6 +67,10 @@ const nurseSchema = new mongoose.Schema(
       }
     },
 
+    lastLocationAt: {
+      type: Date
+    },
+
     isOnline: {
       type: Number,
       enum: [0, 1],
@@ -93,12 +97,6 @@ const nurseSchema = new mongoose.Schema(
     versionKey: false
   }
 );
-
-/* ---------------- Indexes ---------------- */
-nurseSchema.index({ username: 1 });
-nurseSchema.index({ isOnline: 1 });
-nurseSchema.index({ verificationStatus: 1 });
-nurseSchema.index({ isDeleted: 1 });
 
 /* ---------------- Password Hashing ---------------- */
 nurseSchema.pre("save", async function (next) {

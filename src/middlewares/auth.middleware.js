@@ -20,10 +20,12 @@ export const authMiddleware = (req, res, next) => {
 
 export const adminOnly = (req, res, next) => {
   if (req.user.role !== "ADMIN") {
+    console.warn(`[AUTH] Unauthorized access attempt by user: ${req.user.id} with role: ${req.user.role}`);
     return res.status(403).json({
       message: "Access denied"
     });
   }
 
+  console.log(`[AUTH] Admin authorized: ${req.user.id}`);
   next();
 };

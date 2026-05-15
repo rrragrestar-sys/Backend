@@ -84,7 +84,7 @@ export const loginDoctor = async (req, res) => {
 
 export const getAllDoctors = async (req, res) => {
   try {
-    const doctors = await Doctor.find();
+    const doctors = await Doctor.find({ isDeleted: { $ne: 1 } });
 
     res.json({
       success: true,
@@ -102,7 +102,7 @@ export const getAllDoctors = async (req, res) => {
 
 export const getDoctorById = async (req, res) => {
   try {
-    const doctor = await Doctor.findById(req.params.id);
+    const doctor = await Doctor.findOne({ _id: req.params.id, isDeleted: { $ne: 1 } });
 
     if (!doctor) {
       return res.status(404).json({
@@ -125,9 +125,11 @@ export const getDoctorById = async (req, res) => {
 
 export const updateDoctor = async (req, res) => {
   try {
-    const doctor = await Doctor.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
+    const doctor = await Doctor.findOneAndUpdate(
+      { _id: req.params.id, isDeleted: { $ne: 1 } },
+      req.body,
+      { new: true }
+    );
 
     if (!doctor) {
       return res.status(404).json({
@@ -150,8 +152,22 @@ export const updateDoctor = async (req, res) => {
 
 export const deleteDoctor = async (req, res) => {
   try {
-    await Doctor.findByIdAndUpdate(req.params.id, { isDeleted: 1 });
+    console.log(`[DELETE] Attempting to delete doctor with ID: ${req.params.id}`);
+    
+    const doctor = await Doctor.findOneAndUpdate(
+      { _id: req.params.id, isDeleted: { $ne: 1 } },
+      { isDeleted: 1 },
+      { new: true }
+    );
 
+    if (!doctor) {
+      console.warn(`[DELETE] Doctor not found or already deleted: ${req.params.id}`);
+      return res.status(404).json({
+        message: "Doctor not found or already deleted",
+      });
+    }
+
+    console.log(`[DELETE] Successfully deleted doctor: ${doctor.name}`);
     res.json({
       success: true,
       message: "Doctor deleted successfully",

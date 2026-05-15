@@ -27,6 +27,6 @@ router.get("/:id", getDoctorById);
 
 router.put("/:id", authMiddleware, updateDoctor);
 
-router.delete("/:id", authMiddleware, deleteDoctor);
+router.delete("/:id", authMiddleware, adminOnly, deleteDoctor);
 
 export default router;

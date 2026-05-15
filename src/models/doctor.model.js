@@ -13,6 +13,11 @@ const doctorSchema = new mongoose.Schema(
       index: true,
     },
 
+    role: {
+      type: String,
+      default: "DOCTOR",
+    },
+
     email: {
       type: String,
       required: true,
@@ -114,6 +119,10 @@ const doctorSchema = new mongoose.Schema(
     location: {
       latitude: Number,
       longitude: Number,
+    },
+
+    lastLocationAt: {
+      type: Date,
     },
 
     /* ---------------- Rating ---------------- */
