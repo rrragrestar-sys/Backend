@@ -1,6 +1,7 @@
 import { Message } from "../models/message.model.js";
 import { User } from "../models/user.model.js";
 import mongoose from "mongoose";
+import { socketService } from "../services/socket.service.js";
 
 export const getRecentChats = async (req, res) => {
   try {
@@ -40,7 +41,46 @@ export const getRecentChats = async (req, res) => {
       })
     );
 
-    res.json({ success: true, chats: populatedChats });
+    res.json({ success: true, data: populatedChats });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getChatHistory = async (req, res) => {
+  try {
+    const { partnerId } = req.params;
+    const userId = req.user.id;
+
+    const messages = await Message.find({
+      $or: [
+        { sender: userId, receiver: partnerId },
+        { sender: partnerId, receiver: userId },
+      ],
+    }).sort({ createdAt: 1 });
+
+    res.json({ success: true, data: messages });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const sendMessage = async (req, res) => {
+  try {
+    const { receiverId, text, attachments } = req.body;
+    const senderId = req.user.id;
+
+    const message = await Message.create({
+      sender: senderId,
+      receiver: receiverId,
+      text,
+      attachments,
+    });
+
+    // Emit via socket
+    socketService.emitToUser(receiverId, "new_message", message);
+
+    res.status(201).json({ success: true, data: message });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

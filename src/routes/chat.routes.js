@@ -1,9 +1,17 @@
 import { Router } from "express";
-import { getRecentChats } from "../controllers/chat.controller.js";
+import { 
+  getRecentChats, 
+  getChatHistory, 
+  sendMessage 
+} from "../controllers/chat.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.get("/recent", authMiddleware, getRecentChats);
+router.use(authMiddleware);
+
+router.get("/recent", getRecentChats);
+router.get("/history/:partnerId", getChatHistory);
+router.post("/send", sendMessage);
 
 export default router;
